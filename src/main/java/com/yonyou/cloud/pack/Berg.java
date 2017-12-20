@@ -13,6 +13,11 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.util.FileUtils;
 
 public class Berg extends Task {
+	
+	private static final String SPI_SUFFIX = File.separator+"META-INF"+File.separator+"services";
+	
+	private  static final String lineSeparator=java.security.AccessController.doPrivileged(new sun.security.action.GetPropertyAction("line.separator"));
+	
 	private String home;
 	private String cls;
 	private final String windowstr = "Windows";
@@ -53,6 +58,16 @@ public class Berg extends Task {
 			}
 		}
 	}
+	
+	public boolean isSpiFile(String filepath) {
+		String filedir = filepath.substring(0, filepath.lastIndexOf(File.separator));
+		if(filedir.toLowerCase().endsWith(SPI_SUFFIX.toLowerCase())) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
 
 	public void unzip(String sourcePath, String targetPath) {
 		int i = -1;
@@ -91,14 +106,31 @@ public class Berg extends Task {
 					if ((!localFile1.exists()) && (j != 0)) {
 						new File(str.substring(0, str.lastIndexOf("/"))).mkdirs();
 					}
-					localFile1.createNewFile();
+					
 
+						
+					localFile1.createNewFile();
+					
+					
 					localInputStream = localZipFile.getInputStream(localZipEntry);
-					localFileOutputStream = new FileOutputStream(localFile1);
-					localBufferedOutputStream = new BufferedOutputStream(localFileOutputStream, 1024);
-					while ((i = localInputStream.read(arrayOfByte)) > -1) {
-						localBufferedOutputStream.write(arrayOfByte, 0, i);
+					//判断是否为java spi文件
+					if(isSpiFile(localFile1.getPath())) {
+						localFileOutputStream = new FileOutputStream(localFile1,true);
+						localBufferedOutputStream = new BufferedOutputStream(localFileOutputStream, 1024);		
+						while ((i = localInputStream.read(arrayOfByte)) > -1) {
+							localBufferedOutputStream.write(arrayOfByte, 0, i);
+						}
+
+						localBufferedOutputStream.write(lineSeparator.getBytes(), 0, lineSeparator.getBytes().length);;
+					}else {
+						localFileOutputStream = new FileOutputStream(localFile1);
+						localBufferedOutputStream = new BufferedOutputStream(localFileOutputStream, 1024);
+						while ((i = localInputStream.read(arrayOfByte)) > -1) {
+							localBufferedOutputStream.write(arrayOfByte, 0, i);
+						}
 					}
+					
+
 					localBufferedOutputStream.flush();
 					localBufferedOutputStream.close();
 					localFileOutputStream.close();
