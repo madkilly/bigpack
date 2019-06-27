@@ -42,8 +42,8 @@ public class Berg extends Task {
 		int total = 0;
 		for (String str3 : this.cls.split(str1)) {
 			total+=1;
-			if (str3.endsWith(".jar")) {
-				if ((str3.indexOf("-public") != -1) && (str3.indexOf("middleware") != -1)) {
+			if (str3.endsWith("sources.jar")) {
+				if ((str3.indexOf("middleware") != -1)) {
 					System.out.println("unzip" + str3);
 					unzip(str3, this.home + "/target/classes/");
 				} else {
