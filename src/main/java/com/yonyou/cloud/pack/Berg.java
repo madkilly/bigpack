@@ -46,17 +46,7 @@ public class Berg extends Task {
 				if ((str3.indexOf("middleware") != -1)) {
 					System.out.println("unzip" + str3);
 					unzip(str3, this.home + "/target/classes/");
-				} else {
-					File localFile1 = new File(str3);
-					File localFile2 = new File(this.home + "/target/classes/BOOT-INF/lib/" + localFile1.getName());
-					System.out
-							.println("copy " + localFile1.getAbsolutePath() + " to : " + localFile2.getAbsolutePath());
-					try {
-						FileUtils.getFileUtils().copyFile(localFile1, localFile2);
-					} catch (IOException localIOException) {
-						localIOException.printStackTrace();
-					}
-				}
+				} 
 			}
 		}
 	}
